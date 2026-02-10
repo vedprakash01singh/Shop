@@ -1,5 +1,17 @@
+import { useContext } from 'react';
+// Simple Toast component
+function SimpleToast({ message, onClose }) {
+  if (!message) return null;
+  return (
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 animate-fade-in">
+      {message}
+      <button className="ml-3 text-white font-bold" onClick={onClose} aria-label="Close">×</button>
+    </div>
+  );
+}
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import Header from './components/Header';
+import HomeSplash from './components/HomeSplash';
 import CategoryBar from './components/CategoryBar';
 import SearchBar from './components/SearchBar';
 import ProductCard from './components/ProductCard';
@@ -9,22 +21,41 @@ import ProductModal from './components/ProductModal';
 import NotificationBanner from './components/NotificationBanner';
 import NotificationToast from './components/NotificationToast';
 import InstallBanner from './components/InstallBanner';
+import CartModal from './components/CartModal';
 import { onForegroundMessage } from './firebase';
 import products, { categories } from './data/products';
+import { CartProvider } from './context/CartContext';
 
 // Replace with your actual WhatsApp number (with country code, no + sign)
 const WHATSAPP_NUMBER = '919716133795';
 const SHOP_NAME = 'Guddu Traders';
 
-function App() {
+
+import { useCart } from './context/CartContext';
+
+function AppContent() {
+  const { addToCart, cart } = useCart();
+    const [toastMsg, setToastMsg] = useState("");
+
+    // Wrap addToCart to show toast
+    const handleAddToCart = (product, qty = 1) => {
+      addToCart(product, qty);
+      setToastMsg('Product added to cart!');
+      setTimeout(() => setToastMsg(""), 2000);
+    };
+  const [showSplash, setShowSplash] = useState(() => {
+    // Only show splash if not dismissed in this session
+    return sessionStorage.getItem('splashDismissed') !== 'true';
+  });
+  const [cartOpen, setCartOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [notification, setNotification] = useState(null);
 
   // Only enable notifications if not on iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   useEffect(() => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (!isIOS) {
       onForegroundMessage((payload) => {
         setNotification({
@@ -33,7 +64,7 @@ function App() {
         });
       });
     }
-  }, []);
+  }, [isIOS]);
 
   const clearNotification = useCallback(() => setNotification(null), []);
 
@@ -78,12 +109,38 @@ function App() {
     window.open(`tel:+${WHATSAPP_NUMBER}`);
   };
 
+  if (showSplash) {
+    return <HomeSplash onEnter={() => {
+      setShowSplash(false);
+      sessionStorage.setItem('splashDismissed', 'true');
+    }} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
+      {/* Cart Modal */}
+      <CartModal open={cartOpen} onClose={() => setCartOpen(false)} whatsappNumber={WHATSAPP_NUMBER} />
       {/* Smart Install Banner for iOS/Android */}
       <InstallBanner />
       {/* Header */}
-      <Header shopName={SHOP_NAME} onCall={handleCall} />
+      <div className="flex items-center justify-between px-4 pt-4">
+        <Header shopName={SHOP_NAME} onCall={handleCall} />
+        {/* Floating Cart Button (top right, only if cart has items) */}
+        {cart.length > 0 && (
+          <button
+            className="fixed top-1/2 right-6 -translate-y-1/2 z-50 bg-white text-green-600 w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-green-50 active:scale-95 transition-all border-2 border-green-500"
+            aria-label="View Cart"
+            onClick={() => setCartOpen(true)}
+          >
+            <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-8 h-8'>
+              <path strokeLinecap='round' strokeLinejoin='round' d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0L7.5 15.75A2.25 2.25 0 009.664 18h7.672a2.25 2.25 0 002.164-1.813l1.286-7.715A1.125 1.125 0 0019.686 7.5H6.272m-1.166-2.228L6.272 7.5m0 0h13.414' />
+            </svg>
+            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow border-2 border-white animate-bounce z-10">
+              {cart.reduce((sum, item) => sum + (item.qty || 1), 0)}
+            </span>
+          </button>
+        )}
+      </div>
 
       {/* Search */}
       <div className="sticky top-0 z-30 bg-slate-50 px-4 pt-2 pb-1">
@@ -131,12 +188,16 @@ function App() {
                 key={product.id}
                 product={product}
                 onOrder={handleWhatsAppOrder}
+                onAddToCart={handleAddToCart}
                 onClick={() => setSelectedProduct(product)}
               />
             ))}
           </div>
         )}
       </section>
+
+      {/* Add to Cart Toast */}
+      <SimpleToast message={toastMsg} onClose={() => setToastMsg("")} />
 
       {/* Footer */}
       <Footer whatsappNumber={WHATSAPP_NUMBER} shopName={SHOP_NAME} />
@@ -150,20 +211,18 @@ function App() {
         />
       )}
 
-      {/* Push Notification Permission Banner */}
-      <NotificationBanner />
+      {/* Push Notification Permission Banner (disabled on iOS) */}
+      {!isIOS && <NotificationBanner />}
 
-      {/* Foreground Notification Toast */}
-      <NotificationToast notification={notification} onClose={clearNotification} />
+      {/* Foreground Notification Toast (disabled on iOS) */}
+      {!isIOS && <NotificationToast notification={notification} onClose={clearNotification} />}
 
-      {/* Floating WhatsApp Button */}
+      {/* Floating WhatsApp Button (bottom right) */}
       <a
         href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('नमस्ते! मुझे आपकी दुकान के बारे में जानकारी चाहिए। / Hello! I need information about your shop.')}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-green-500 text-white w-14 h-14 rounded-full 
-                   flex items-center justify-center shadow-lg hover:bg-green-600 
-                   active:scale-95 transition-all"
+        className="fixed bottom-6 right-6 z-50 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 active:scale-95 transition-all"
         aria-label="Chat on WhatsApp"
       >
         <svg viewBox="0 0 24 24" className="w-7 h-7 fill-current">
@@ -174,4 +233,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <CartProvider>
+      <AppContent />
+    </CartProvider>
+  );
+}
