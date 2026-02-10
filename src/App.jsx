@@ -126,7 +126,7 @@ function AppContent() {
       <div className="flex items-center justify-between px-4 pt-4">
         <Header shopName={SHOP_NAME} onCall={handleCall} />
         {/* Floating Cart Button (top right, only if cart has items) */}
-        {cart.length > 0 && (
+        {cart.length > 0 && !cartOpen && (
           <button
             className="fixed top-1/2 right-6 -translate-y-1/2 z-50 bg-white text-green-600 w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-green-50 active:scale-95 transition-all border-2 border-green-500"
             aria-label="View Cart"
