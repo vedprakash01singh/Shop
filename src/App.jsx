@@ -22,14 +22,17 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [notification, setNotification] = useState(null);
 
-  // Listen for foreground push notifications
+  // Only enable notifications if not on iOS
   useEffect(() => {
-    onForegroundMessage((payload) => {
-      setNotification({
-        title: payload.notification?.title,
-        body: payload.notification?.body,
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (!isIOS) {
+      onForegroundMessage((payload) => {
+        setNotification({
+          title: payload.notification?.title,
+          body: payload.notification?.body,
+        });
       });
-    });
+    }
   }, []);
 
   const clearNotification = useCallback(() => setNotification(null), []);
