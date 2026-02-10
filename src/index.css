@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-700 text-white px-4 py-2 rounded-lg font-medium 
+           hover:bg-primary-800 active:bg-primary-900 transition-colors
+           shadow-sm;
+  }
+  
+  .btn-whatsapp {
+    @apply bg-green-600 text-white px-4 py-2 rounded-lg font-medium 
+           hover:bg-green-700 active:bg-green-800 transition-colors
+           shadow-sm flex items-center gap-2;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-100 
+           overflow-hidden transition-shadow hover:shadow-md;
+  }
+  
+  .badge-new {
+    @apply bg-red-500 text-white text-xs font-bold px-2 py-0.5 
+           rounded-full uppercase tracking-wide animate-pulse;
+  }
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
