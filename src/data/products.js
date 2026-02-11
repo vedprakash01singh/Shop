@@ -2,6 +2,30 @@
 // You can easily update this file to add/remove products
 
 const products = [
+            {
+              id: 109,
+              name: "Kamdhenu Color Karkat",
+              nameHi: "कमधेनु कलर करकट",
+              category: "building",
+              price: 1600,
+              unit: "sheet / शीट",
+              description: "Kamdhenu color karkat galvanized roofing sheet.",
+              isNew: true,
+              inStock: true,
+              image: "https://www.kamdhenulimited.com/upload/1758005380_subcategory1.png",
+            },
+            {
+              id: 110,
+              name: "Tata Shakti Galvanized Sheet",
+              nameHi: "टाटा शक्ति करकट",
+              category: "building",
+              price: 1400,
+              unit: "sheet / शीट",
+              description: "Tata Shakti galvanized corrugated roofing sheet.",
+              isNew: true,
+              inStock: true,
+              image: "https://images.jdmagicbox.com/quickquotes/images_main/tata-shaktee-0-70-mm-galvanized-corrugated-roofing-sheet-2219685846-mqqj1wze.jpg",
+            },
           {
             id: 108,
             name: "Patwari TMT Iron Bars",
