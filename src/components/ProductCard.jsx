@@ -51,7 +51,7 @@ export default function ProductCard({ product, onOrder, onClick, onAddToCart }) 
           <img
             src={product.image}
             alt={product.name}
-            className="object-contain w-full h-full max-h-32"
+            className="object-contain w-full h-full max-h-[16rem]"
             loading="lazy"
           />
         </div>

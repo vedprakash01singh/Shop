@@ -1,3 +1,6 @@
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+
 const categoryColors = {
   building: 'from-orange-500 to-orange-600',
   hardware: 'from-slate-500 to-slate-600',
@@ -57,12 +60,14 @@ export default function ProductModal({ product, onClose, onOrder }) {
         {/* Product Image (show below banner) */}
         {product.image && (
           <div className="w-full bg-slate-100 flex items-center justify-center overflow-hidden" style={{maxHeight: 220}}>
-            <img
-              src={product.image}
-              alt={product.name}
-              className="object-contain w-full h-full max-h-56"
-              loading="lazy"
-            />
+            <Zoom>
+              <img
+                src={product.image}
+                alt={product.name}
+                className="object-contain w-full h-full max-h-56 cursor-zoom-in"
+                loading="lazy"
+              />
+            </Zoom>
           </div>
         )}
 
