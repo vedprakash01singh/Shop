@@ -2,7 +2,7 @@ export default function CategoryBar({ categories, active, onChange }) {
   return (
     <div className="px-4 mt-2">
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-        {categories.map((cat) => (
+        {categories.filter(cat => !cat.disabled).map((cat) => (
           <button
             key={cat.id}
             onClick={() => onChange(cat.id)}

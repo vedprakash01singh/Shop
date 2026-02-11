@@ -69,12 +69,9 @@ function AppContent() {
   const clearNotification = useCallback(() => setNotification(null), []);
 
   const filteredProducts = useMemo(() => {
-    let filtered = products;
-
-    if (activeCategory !== 'all') {
-      filtered = filtered.filter((p) => p.category === activeCategory);
-    }
-
+    // Only show building material items for now
+    let filtered = products.filter((p) => p.category === 'building' && !p.disabled);
+    // Optionally allow search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -84,9 +81,8 @@ function AppContent() {
           p.description.toLowerCase().includes(q)
       );
     }
-
     return filtered;
-  }, [activeCategory, searchQuery]);
+  }, [searchQuery]);
 
   const newProducts = useMemo(
     () => products.filter((p) => p.isNew),
