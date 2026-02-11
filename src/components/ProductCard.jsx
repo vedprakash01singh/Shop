@@ -30,6 +30,14 @@ export default function ProductCard({ product, onOrder, onClick, onAddToCart }) 
   const isDisabled = product.disabled;
   return (
     <div className={`card cursor-pointer relative ${isDisabled ? 'opacity-60 pointer-events-none' : ''}`} onClick={onClick}>
+      {/* OFFER badge on top */}
+      {product.category === "building" && (
+        ((product.name.toLowerCase().includes("cement") || product.name.toLowerCase().includes("prism")) || product.name.toLowerCase().includes("gitti") || product.name.toLowerCase().includes("balu")) && (
+          <span className="absolute top-2 left-2 z-20 animate-pulse bg-gradient-to-r from-orange-500 to-yellow-400 text-white text-sm font-extrabold px-3 py-1 rounded-full shadow-lg border-2 border-white">
+            OFFER!
+          </span>
+        )
+      )}
       {/* Category color bar + badge */}
       <div className={`bg-gradient-to-r ${categoryColors[product.category]} px-3 py-2 
                         flex items-center justify-between`}>

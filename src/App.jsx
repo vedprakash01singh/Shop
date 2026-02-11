@@ -81,6 +81,13 @@ function AppContent() {
           p.description.toLowerCase().includes(q)
       );
     }
+    // Sort offer items to top
+    filtered = filtered.sort((a, b) => {
+      const isOfferA = (a.name.toLowerCase().includes("cement") || a.name.toLowerCase().includes("prism") || a.name.toLowerCase().includes("gitti") || a.name.toLowerCase().includes("balu"));
+      const isOfferB = (b.name.toLowerCase().includes("cement") || b.name.toLowerCase().includes("prism") || b.name.toLowerCase().includes("gitti") || b.name.toLowerCase().includes("balu"));
+      if (isOfferA === isOfferB) return 0;
+      return isOfferA ? -1 : 1;
+    });
     return filtered;
   }, [searchQuery]);
 

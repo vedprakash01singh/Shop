@@ -68,6 +68,32 @@ export default function ProductModal({ product, onClose, onOrder }) {
 
         {/* Details */}
         <div className="p-5">
+                    {/* Offer Section */}
+                    {product.category === "building" && (
+                      <div className="mb-4">
+                        <h3 className="text-sm font-semibold text-orange-600 mb-1">Special Offers</h3>
+                        {/* Cement Offers */}
+                        {(product.name.toLowerCase().includes("cement") || product.name.toLowerCase().includes("prism")) && (
+                          <ul className="text-xs text-orange-700 list-disc pl-5 mb-2">
+                            <li>Order ₹10,000+: Free delivery within 3km</li>
+                            <li>Order ₹20,000+: Free delivery within 5km</li>
+                          </ul>
+                        )}
+                        {/* Gitti Offers */}
+                        {product.name.toLowerCase().includes("gitti") && (
+                          <ul className="text-xs text-orange-700 list-disc pl-5 mb-2">
+                            <li>Order ₹15,000+: Free delivery within 3km</li>
+                            <li>Order ₹30,000+: Free delivery within 5km</li>
+                          </ul>
+                        )}
+                        {/* Balu Offers */}
+                        {product.name.toLowerCase().includes("balu") && (
+                          <ul className="text-xs text-orange-700 list-disc pl-5 mb-2">
+                            <li>Order ₹10,000+: Free delivery within 3km</li>
+                          </ul>
+                        )}
+                      </div>
+                    )}
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-4">
             <span className="text-3xl font-bold text-primary-700">
